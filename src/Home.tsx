@@ -21,38 +21,47 @@ const Box = styled(motion.div)`
 `;
 
 const boxVariants = {
-  start: { x: window.outerWidth + 10 },
+  start: { x: window.outerWidth },
   end: { x: 0 },
-  exit: { x: -window.outerWidth - 10 },
+  exit: { x: -window.outerWidth / 2 },
 };
 
 function Home() {
   const offset = 6;
 
   const arr = Array.from({ length: 20 }, (v, i) => i + 1);
-  const [Leaving, setLeaving] = useState(false);
   const [leaving, setToggleLeaving] = useState(false);
+  const [page, setPage] = useState(0);
 
-  const [page, setPage] = useState(1);
+  const boxVariants = {
+    start: { x: window.innerWidth - 600 },
+    end: { x: 0 },
+    exit: { x: -window.innerWidth + 600 },
+  };
 
   const onClick = () => {
-    if (leaving) return;
+    // if (leaving) return;
+    //
     const total = arr.length;
     const maxIndex = Math.floor(total / offset) - 1;
-    setPage((prev) => (prev === 4 ? 0 : prev + 1));
+    setPage((prev) => (prev === maxIndex ? 0 : prev + 1));
   };
-  const toggleLeavig = () => setLeaving((prev) => !prev);
+  const toggleLeavig = () => setToggleLeaving((prev) => !prev);
   return (
     <Wrapper onClick={onClick}>
       <AnimatePresence initial={false} onExitComplete={toggleLeavig}>
-        {arr.slice((page - 1) * offset, page * offset).map((v) => (
+        {arr.slice(page * offset, page * offset + offset).map((v) => (
           <Box
             key={v}
             variants={boxVariants}
-            initial="false"
+            initial="start"
             animate="end"
             exit="exit"
-            transition={{ type: "tween", duration: 0.5 }}
+            transition={{
+              type: "tween",
+              duration: 1,
+              ease: "linear",
+            }}
           >
             {v}
           </Box>
