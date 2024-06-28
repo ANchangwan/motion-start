@@ -7,7 +7,24 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const Slider = styled(motion.div)`
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
   gap: 10px;
+  width: 100%;
+  place-items: center;
+  position: relative;
+`;
+
+const Row = styled(motion.div)`
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  position: absolute;
+  width: 100%;
+  place-items: center;
 `;
 
 const Box = styled(motion.div)`
@@ -21,9 +38,9 @@ const Box = styled(motion.div)`
 `;
 
 const boxVariants = {
-  start: { x: window.outerWidth },
+  start: { x: window.innerWidth + 10 },
   end: { x: 0 },
-  exit: { x: -window.outerWidth / 2 },
+  exit: { x: -window.innerWidth - 10 },
 };
 
 function Home() {
@@ -33,40 +50,37 @@ function Home() {
   const [leaving, setToggleLeaving] = useState(false);
   const [page, setPage] = useState(0);
 
-  const boxVariants = {
-    start: { x: window.innerWidth - 600 },
-    end: { x: 0 },
-    exit: { x: -window.innerWidth + 600 },
-  };
-
   const onClick = () => {
-    // if (leaving) return;
-    //
+    if (leaving) {
+      setToggleLeaving(false);
+      return;
+    }
+
     const total = arr.length;
     const maxIndex = Math.floor(total / offset) - 1;
     setPage((prev) => (prev === maxIndex ? 0 : prev + 1));
   };
-  const toggleLeavig = () => setToggleLeaving((prev) => !prev);
   return (
     <Wrapper onClick={onClick}>
-      <AnimatePresence initial={false} onExitComplete={toggleLeavig}>
-        {arr.slice(page * offset, page * offset + offset).map((v) => (
-          <Box
-            key={v}
+      <Slider>
+        <AnimatePresence initial={false}>
+          <Row
             variants={boxVariants}
             initial="start"
             animate="end"
             exit="exit"
+            key={page}
             transition={{
               type: "tween",
               duration: 1,
-              ease: "linear",
             }}
           >
-            {v}
-          </Box>
-        ))}
-      </AnimatePresence>
+            {arr.slice(page * offset, page * offset + offset).map((v) => (
+              <Box key={v}>{v}</Box>
+            ))}
+          </Row>
+        </AnimatePresence>
+      </Slider>
     </Wrapper>
   );
 }
