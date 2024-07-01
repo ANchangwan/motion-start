@@ -28,13 +28,14 @@ const Row = styled(motion.div)`
 `;
 
 const Box = styled(motion.div)`
-  height: 100px;
-  width: 100px;
+  height: 150px;
+  width: 100%;
   background-color: white;
   border-radius: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
+  transform-origin: bottom;
   &:first-child {
     transform-origin: bottom left;
   }
@@ -54,6 +55,15 @@ const Overlay = styled(motion.div)`
   background-color: rgba(0, 0, 0, 0.5);
 `;
 
+const OverlayBox = styled(motion.div)`
+  height: 80vh;
+  width: 40vh;
+  background-color: white;
+  border-radius: 15px;
+  position: absolute;
+  top: 20px;
+`;
+
 const rowVariants = {
   start: { x: window.innerWidth + 10 },
   end: { x: 0 },
@@ -64,11 +74,6 @@ const boxVariants = {
   hover: {
     scale: 1.3,
   },
-};
-
-const exitVariant = {
-  start: { opcity: 1 },
-  exit: { opacity: 0 },
 };
 
 function Home() {
@@ -86,14 +91,13 @@ function Home() {
     const maxIndex = Math.floor(total / offset) - 1;
     setPage((prev) => (prev === maxIndex ? 0 : prev + 1));
   };
-  const onClickBox = (id: string) => {
-    console.log(typeof id);
+  const onClickBox = (id: number) => {
     setSeletedId(id + "");
   };
 
   const toggle = () => setToggleLeaving((prev) => !prev);
   return (
-    <Wrapper onClick={onClick}>
+    <Wrapper>
       <Slider>
         <AnimatePresence initial={false} onExitComplete={toggle}>
           <Row
@@ -123,12 +127,15 @@ function Home() {
       </Slider>
       <AnimatePresence>
         {seletedId ? (
-          <Overlay
-            variants={exitVariant}
-            animate="start"
-            exit="exit"
-            layoutId={seletedId}
-          ></Overlay>
+          <>
+            <Overlay
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSeletedId("")}
+            >
+              <OverlayBox layoutId={seletedId} />
+            </Overlay>
+          </>
         ) : null}
       </AnimatePresence>
     </Wrapper>
